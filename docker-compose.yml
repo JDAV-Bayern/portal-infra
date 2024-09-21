@@ -14,17 +14,10 @@ services:
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--log.level=DEBUG"
 
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.webapp.rule=Host(`portal.jdav-bayern.de/traefik`)" 
-      - "traefik.http.routers.webapp.entrypoints=websecure"        
-      - "traefik.http.routers.webapp.tls.certresolver=myresolver"  
-      - "traefik.http.services.webapp.loadbalancer.server.port=8080" 
-      - "traefik.port=8080"
-
     ports:
       - "80:80"
       - "443:443"
+      - 8080:8080
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
