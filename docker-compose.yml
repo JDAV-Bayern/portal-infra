@@ -21,12 +21,6 @@ services:
       - '9004:9004'
 
     deploy:
-      mode: global
-      placement:
-        constraints:
-          # Make the traefik service run only on the node with this label
-          # as the node with it has the volume for the certificates
-          - node.labels.traefik-public.traefik-public-certificates == true
       labels:
         # Enable Traefik for this service, to make it available in the public network
         - traefik.enable=true
