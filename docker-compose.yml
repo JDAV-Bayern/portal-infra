@@ -101,6 +101,9 @@ services:
       # Use the TLS Challenge for Let's Encrypt
       - --certificatesresolvers.le.acme.tlschallenge=true
 
+      - --entrypoints.traefik-ui.address=:8080
+      - "--log.level=DEBUG"
+
       # Enable the Dashboard and API
       - --api
 
