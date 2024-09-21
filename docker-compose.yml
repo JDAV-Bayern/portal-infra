@@ -13,10 +13,18 @@ services:
       - "--certificatesresolvers.myresolver.acme.email=joseph.hirsch@jdav-bayern.de"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
       - "--log.level=DEBUG"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webapp.rule=Host(`portal.jdav-bayern.de/traefik`)" 
+      - "traefik.http.routers.webapp.entrypoints=websecure"        
+      - "traefik.http.routers.webapp.tls.certresolver=myresolver"  
+      - "traefik.http.services.webapp.loadbalancer.server.port=8080" 
+      - "traefik.port=8080"
+
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"  # Traefik dashboard (optional)
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
@@ -35,6 +43,8 @@ services:
       - "traefik.http.routers.webapp.entrypoints=websecure"        
       - "traefik.http.routers.webapp.tls.certresolver=myresolver"  
       - "traefik.http.services.webapp.loadbalancer.server.port=80" 
+      - "traefik.port=80"
+
     networks:
       - web
     deploy:
@@ -50,6 +60,8 @@ services:
   watchtower:
     image: containrrr/watchtower
     command: --interval 30 --cleanup
+    labels:
+      - "traefik.enable=false"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
