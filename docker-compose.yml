@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.5
+    command:
+      - "--api.insecure=true"                          # Enable Traefik dashboard
+      - "--providers.docker.swarmMode=true"            # Enable Swarm mode
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--entrypoints.web.address=:80"                # HTTP entrypoint
+      - "--entrypoints.websecure.address=:443"         # HTTPS entrypoint
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=joseph.hirsch@jdav-bayern.de"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--log.level=DEBUG"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard (optional)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - web
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  webapp:
+    image: ghcr.io/jdav-bayern/fahrtkostenabrechnung:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webapp.rule=Host(`portal.jdav-bayern.de`)" 
+      - "traefik.http.routers.webapp.entrypoints=websecure"        
+      - "traefik.http.routers.webapp.tls.certresolver=myresolver"  
+      - "traefik.http.services.webapp.loadbalancer.server.port=80" 
+    networks:
+      - web
+    deploy:
+      mode: replicated
+      replicas: 2   # Number of replicas for scaling
+      update_config:
+        parallelism: 1   # Update one container at a time
+        delay: 30s       # Delay between updates
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+
+  watchtower:
+    image: containrrr/watchtower
+    command: --interval 30 --cleanup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  web:
+    driver: overlay
+
+volumes:
+  letsencrypt:
