@@ -98,13 +98,6 @@ services:
       # Use the TLS Challenge for Let's Encrypt
       - --certificatesresolvers.le.acme.tlschallenge=true
 
-      # Enable the access log, with HTTP requests
-      - --accesslog.bufferingsize=100
-      - --accesslog.filepath=/var/log/traefik/traefik-access.log
-
-      # Enable the Traefik log, for configurations and errors
-      - --log
-
       # Enable the Dashboard and API
       - --api
 
