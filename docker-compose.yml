@@ -103,6 +103,7 @@ services:
 
       # SMDM entrypoints additional services
       - --entrypoints.traefik-ui.address=:9004
+      - "--log.level=DEBUG"
 
 
     networks:
