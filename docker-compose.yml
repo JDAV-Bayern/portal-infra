@@ -83,6 +83,9 @@ services:
       # Create an entrypoint "https" listening on address 443
       - --entrypoints.https.address=:443
 
+      - "--entrypoints.http.http.redirections.entrypoint.to=https"
+      - "--entrypoints.http.http.redirections.entrypoint.scheme=https"
+
       # Create the certificate resolver "le" for Let's Encrypt, uses the environment variable EMAIL
       - --certificatesresolvers.le.acme.email=joseph.hirsch@jdav-bayern.de
 
