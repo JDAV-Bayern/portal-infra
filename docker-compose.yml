@@ -60,6 +60,3 @@ services:
 networks:
   web:
     driver: overlay
-
-volumes:
-  letsencrypt:
