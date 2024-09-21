@@ -36,15 +36,9 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
 
         # traefik-http set up only to use the middleware to redirect to https
-        # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-http.rule=Host(`portal.jdav-bayern.de/traefik`)
-        - traefik.http.routers.traefik-public-http.entrypoints=traefik-ui
         - traefik.http.routers.traefik-public-http.middlewares=https-redirect
 
         # traefik-https the actual router using HTTPS
-        # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-https.rule=Host(`portal.jdav-bayern.de/traefik`)
-        - traefik.http.routers.traefik-public-https.entrypoints=traefik-ui
         - traefik.http.routers.traefik-public-https.tls=true
 
         # Use the special Traefik service api@internal with the web UI/Dashboard
@@ -52,9 +46,6 @@ services:
 
         # Use the "le" (Let's Encrypt) resolver created below
         - traefik.http.routers.traefik-public-https.tls.certresolver=le
-
-        # Define the port inside of the Docker service to use
-        - traefik.http.services.traefik-public.loadbalancer.server.port=8080
 
         # when running in Docker Swarm Mode, use swarm loadbalancer!!
         - traefik.docker.lbswarm=true
@@ -101,7 +92,6 @@ services:
       # Use the TLS Challenge for Let's Encrypt
       - --certificatesresolvers.le.acme.tlschallenge=true
 
-      - --entrypoints.traefik-ui.address=:8080
       - "--log.level=DEBUG"
 
       # Enable the Dashboard and API
