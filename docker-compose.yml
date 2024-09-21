@@ -15,10 +15,13 @@ services:
         published: 443
         mode: host
         protocol: tcp
+      # Listen on port 8080, default for Traefik UI
+      - target: 8080
+        published: 8080
+        mode: host
+        protocol: tcp
 
     
-      # traefik ui
-      - '9004:9004'
 
     deploy:
       labels:
@@ -34,13 +37,13 @@ services:
 
         # traefik-http set up only to use the middleware to redirect to https
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-http.rule=Host(`portal.jdav-bayern.de`)
+        - traefik.http.routers.traefik-public-http.rule=Host(`portal.jdav-bayern.de/traefik`)
         - traefik.http.routers.traefik-public-http.entrypoints=traefik-ui
         - traefik.http.routers.traefik-public-http.middlewares=https-redirect
 
         # traefik-https the actual router using HTTPS
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-https.rule=Host(`portal.jdav-bayern.de`)
+        - traefik.http.routers.traefik-public-https.rule=Host(`portal.jdav-bayern.de/traefik`)
         - traefik.http.routers.traefik-public-https.entrypoints=traefik-ui
         - traefik.http.routers.traefik-public-https.tls=true
 
@@ -100,10 +103,6 @@ services:
 
       # Enable the Dashboard and API
       - --api
-
-      # SMDM entrypoints additional services
-      - --entrypoints.traefik-ui.address=:9004
-      - "--log.level=DEBUG"
 
 
     networks:
