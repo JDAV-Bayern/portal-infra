@@ -44,7 +44,7 @@ crontab -e
 und folgende Zeile hinzufügen:
 
 ```bash
-0 3 * * * docker service update --image jdavbayern/portal-jdav-bayern:latest portal-jdav-bayern_webapp
+0 3 * * * docker service update --image ghcr.io/jdav-bayern/fahrtkostenabrechnung:latest portal-jdav-bayern_webapp
 ```
 
 Dieser Cron-Job führt das Update jeden Tag um 3 Uhr morgens aus.
