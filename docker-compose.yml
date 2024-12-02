@@ -158,7 +158,7 @@ services:
   
   zitadel:
     image: ghcr.io/zitadel/zitadel:latest
-    command: start-from-init --masterkey ${ZITADEL_MASTERKEY} --tlsMode disabled
+    command: start-from-init --masterkeyFromEnv --tlsMode disabled
     deploy:
       replicas: 1
       labels:
